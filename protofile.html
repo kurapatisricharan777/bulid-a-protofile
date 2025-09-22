@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Full Project (Portfolio + ToDo + Products)</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+        
+        header {
+            background: #333;
+            color: #fff;
+            padding: 15px;
+            text-align: center;
+        }
+        
+        nav a {
+            color: white;
+            margin: 0 10px;
+            text-decoration: none;
+        }
+        
+        section {
+            padding: 20px;
+        }
+        
+        footer {
+            background: #333;
+            color: #fff;
+            text-align: center;
+            padding: 10px;
+        }
+        /* Portfolio */
+        
+        .project-card {
+            border: 1px solid #ddd;
+            padding: 15px;
+            margin: 10px 0;
+            border-radius: 5px;
+        }
+        
+        form input,
+        form textarea {
+            display: block;
+            width: 100%;
+            margin: 10px 0;
+            padding: 8px;
+            box-sizing: border-box;
+        }
+        
+        form button {
+            background: #333;
+            color: white;
+            border: none;
+            padding: 10px;
+            cursor: pointer;
+        }
+        /* Todo App */
+        
+        .todo-container {
+            margin: 20px auto;
+            width: 300px;
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        
+        #taskList {
+            list-style: none;
+            padding: 0;
+        }
+        
+        #taskList li {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin: 5px 0;
+            padding: 10px;
+            background: #eee;
+            border-radius: 5px;
+        }
+        
+        #taskList .deleteBtn {
+            background-color: #dc3545;
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        /* Products */
+        
+        .filters {
+            margin-bottom: 20px;
+        }
+        
+        #productList {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+        }
+        
+        .product-card {
+            border: 1px solid #ddd;
+            margin: 0;
+            padding: 15px;
+            border-radius: 5px;
+            text-align: center;
+        }
+    </style>
+</head>
+
+<body>
+
+    <header>
+        <h1>My Portfolio</h1>
+        <nav>
+            <a href="#about">About</a>
+            <a href="#projects">Projects</a>
+            <a href="#contact">Contact</a>
+            <a href="#todo">To-Do</a>
+            <a href="#products">Products</a>
+        </nav>
+    </header>
+
+    <section id="about">
+        <h2>About Me</h2>
+        <p>Hello! I’m a web developer passionate about building interactive websites.</p>
+    </section>
+
+    <section id="projects">
+        <h2>Portfolio Projects</h2>
+        <div class="project-card">
+            <h3>To-Do App</h3>
+            <p>A simple app to manage tasks using Local Storage.</p>
+        </div>
+        <div class="project-card">
+            <h3>Product Page</h3>
+            <p>Product listing with filtering and sorting options.</p>
+        </div>
+    </section>
+
+    <section id="contact">
+        <h2>Contact</h2>
+        <form id="contactForm">
+            <input type="text" placeholder="Your Name" required>
+            <input type="email" placeholder="Your Email" required>
+            <textarea placeholder="Your Message"></textarea>
+            <button type="submit">Send</button>
+        </form>
+    </section>
+
+    <section id="todo">
+        <h2>To-Do List</h2>
+        <div class="todo-container">
+            <input type="text" id="taskInput" placeholder="Enter a new task">
+            <button id="addTaskBtn">Add Task</button>
+            <ul id="taskList"></ul>
+        </div>
+    </section>
+
+    <section id="products">
+        <h2>Product Listing</h2>
+        <div class="filters">
+            <select id="categoryFilter">
+                <option value="all">All Categories</option>
+                <option value="electronics">Electronics</option>
+                <option value="clothing">Clothing</option>
+            </select>
+            <select id="sortPrice">
+                <option value="asc">Price: Low to High</option>
+                <option value="desc">Price: High to Low</option>
+            </select>
+        </div>
+        <div id="productList"></div>
+    </section>
+
+    <footer>
+        <p>© 2025 My Portfolio</p>
+    </footer>
+
+    <script>
+        // Portfolio Contact Form
+        document.getElementById("contactForm").addEventListener("submit", function(event) {
+            event.preventDefault();
+            alert("Message sent successfully!");
+        });
+
+        // Todo App
+        const taskInput = document.getElementById("taskInput");
+        const addTaskBtn = document.getElementById("addTaskBtn");
+        const taskList = document.getElementById("taskList");
+
+        function loadTasks() {
+            const tasks = JSON.parse(localStorage.getItem("tasks")) || [];
+            tasks.forEach(taskText => addTask(taskText));
+        }
+
+        function saveTasks() {
+            const tasks = [];
+            document.querySelectorAll("#taskList li span").forEach(item => {
+                tasks.push(item.textContent);
+            });
+            localStorage.setItem("tasks", JSON.stringify(tasks));
+        }
+
+        function addTask(taskText) {
+            const li = document.createElement("li");
+            li.innerHTML = `<span>${taskText}</span>
+                            <button class="deleteBtn">X</button>`;
+            taskList.appendChild(li);
+
+            li.querySelector(".deleteBtn").addEventListener("click", () => {
+                li.remove();
+                saveTasks();
+            });
+        }
+
+        addTaskBtn.addEventListener("click", () => {
+            if (taskInput.value.trim()) {
+                addTask(taskInput.value.trim());
+                saveTasks();
+                taskInput.value = "";
+            }
+        });
+
+        window.onload = loadTasks;
+
+        // Product Listing
+        const products = [{
+            name: "Laptop",
+            category: "electronics",
+            price: 800
+        }, {
+            name: "Shirt",
+            category: "clothing",
+            price: 40
+        }, {
+            name: "Smartphone",
+            category: "electronics",
+            price: 600
+        }, {
+            name: "Jeans",
+            category: "clothing",
+            price: 60
+        }];
+
+        const productList = document.getElementById("productList");
+        const categoryFilter = document.getElementById("categoryFilter");
+        const sortPrice = document.getElementById("sortPrice");
+
+        function displayProducts(items) {
+            productList.innerHTML = "";
+            items.forEach(p => {
+                const div = document.createElement("div");
+                div.className = "product-card";
+                div.innerHTML = `<h3>${p.name}</h3><p>Category: ${p.category}</p><p>Price: $${p.price}</p>`;
+                productList.appendChild(div);
+            });
+        }
+
+        function filterAndSort() {
+            let filtered = [...products];
+            if (categoryFilter.value !== "all") {
+                filtered = filtered.filter(p => p.category === categoryFilter.value);
+            }
+            filtered.sort((a, b) => sortPrice.value === "asc" ? a.price - b.price : b.price - a.price);
+            displayProducts(filtered);
+        }
+
+        categoryFilter.addEventListener("change", filterAndSort);
+        sortPrice.addEventListener("change", filterAndSort);
+
+        filterAndSort(); // initial display
+    </script>
+</body>
+
+</html>
